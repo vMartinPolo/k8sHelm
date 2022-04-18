@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  eoloserver:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2022-04-09T19:13:05.1647724+02:00"
+    description: A Helm chart for Kubernetes
+    digest: 8b2a507a283809a80d3fdd30546899838fecdcd441c41b47f50d89cd328ed74f
+    name: eoloserver
+    type: application
+    urls:
+    - eoloserver-0.1.0.tgz
+    version: 0.1.0
+generated: "2022-04-09T19:13:05.1637969+02:00"

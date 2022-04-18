@@ -1,0 +1,49 @@
+# Default values for eoloserver.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+# Network policies
+security:
+  enabled: true
+
+service:
+  type: ClusterIP #NodePort
+  port: 80
+
+ingress:
+  enabled: false
+  hosts:
+    host: cluster-ip
+
+# Persistent volumes
+persistentVolume:
+  enabled: true #false creación por defecto
+  storageclass:
+    mysql: mysql
+    mongo: mongo
+    rabbit: rabbit
+    isPureDefault: true
+
+planner: #codeurjc/planner:v1.0
+  image: codeurjc/planner
+  tag: v1.0
+
+server: #codeurjc/server:v1.0
+  image: codeurjc/server
+  tag: v1.0
+
+toposervice: #codeurjc/toposervice:v1.0
+  image: codeurjc/toposervice
+  tag: v1.0
+
+weatherservice: #codeurjc/weatherservice:v1.0
+  image: codeurjc/weatherservice
+  tag: v1.0
