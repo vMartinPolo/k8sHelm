@@ -12,13 +12,13 @@ security:
   enabled: true
 
 service:
-  type: LoadBalancer
+  type: NodePort
   port: 3000
 
 ingress:
-  enabled: false
+  enabled: true
   hosts:
-    host: cluster-ip
+    host: cluster-ip2
     paths:
     - path: /
     - path: /toposervice/
@@ -28,13 +28,13 @@ persistentVolume:
   enabled: true
   mysql:
     storageclass: mysql
-    path: /db/mysql
+    path: /db/mysql2
   mongo:
     storageclass: mongo
-    path: /db/mongo
+    path: /db/mongo2
   rabbit:
     storageclass: rabbit
-    path: /db/rabbitmq
+    path: /db/rabbitmq2
 
 mysql:
   image: mysql

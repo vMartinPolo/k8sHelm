@@ -3,12 +3,12 @@ entries:
   eoloserver:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2022-04-18T10:52:39.9596632+02:00"
+    created: "2022-04-19T11:48:25.6463333+02:00"
     description: A Helm chart for Kubernetes
-    digest: 8b2a507a283809a80d3fdd30546899838fecdcd441c41b47f50d89cd328ed74f
+    digest: 5691af5e652d505d5753ef929adc95a5946afb3244174c793e07f47fbcc469c2
     name: eoloserver
     type: application
     urls:
     - eoloserver-0.1.0.tgz
     version: 0.1.0
-generated: "2022-04-18T10:52:39.9512903+02:00"
+generated: "2022-04-19T11:48:25.6352973+02:00"

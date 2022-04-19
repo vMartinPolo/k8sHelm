@@ -24,21 +24,21 @@ spec:
         image: {{ .Values.planner.image }}:{{ .Values.planner.tag }}
         env:
         - name: TOPO_HOST
-          value: toposervice-service
+          value: {{ .Release.Name }}-toposervice-service
         - name: TOPO_PORT
-          value: "8181"
+          value: {{ .Values.toposervice.ports.containerPort | quote }}
         - name: GRPC_CLIENT_WEATHERSERVER_ADDRESS
-          value: static://weatherservice-service:9090
+          value: static://{{ .Release.Name }}-weatherservice-service:{{ .Values.weatherservice.env.port }}
         - name: SPRING_CLOUD_STREAM_RABBIT_BINDER_NODES
           value: rabbitmq-service:5672
         - name: SPRING_RABBITMQ_HOST
-          value: rabbitmq-service
+          value: {{ .Release.Name }}-rabbitmq-service
         - name: SPRING_RABBITMQ_PORT
           value: "5672"
         - name: SPRING_RABBITMQ_USERNAME
-          value: root
+          value: {{ .Values.rabbitmq.env.defaultUser }}
         - name: SPRING_RABBITMQ_PASSWORD
-          value: password
+          value: {{ .Values.rabbitmq.env.defaultPass }}
 ---
 {{- if .Values.security.enabled -}}
 apiVersion: networking.k8s.io/v1
@@ -62,13 +62,13 @@ spec:
         matchLabels:
           app: weatherservice
     ports:
-    - port: 9090
+    - port: {{ .Values.weatherservice.env.port }}
       protocol: TCP
   - to:
     - podSelector:
         matchLabels:
           app: toposervice
     ports:
-    - port: 8181
+    - port: {{ .Values.toposervice.ports.containerPort }}
       protocol: TCP
 {{- end -}}

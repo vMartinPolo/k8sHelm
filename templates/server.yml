@@ -25,18 +25,18 @@ spec:
         command: ["bash"]
         args:
         - "-c"
-        - "./wait-for-it.sh mysql-service:3306 -t 500 -- ./wait-for-it.sh rabbitmq-service:5672 -t 500 -- node src/server.js"
+        - "./wait-for-it.sh {{ .Release.Name }}-mysql-service:3306 -t 20 -- ./wait-for-it.sh {{ .Release.Name }}-rabbitmq-service:5672 -t 20 -- node src/server.js"
         env:
         - name: MYSQL_HOST
-          value: mysql-service
+          value: {{ .Release.Name }}-mysql-service
         - name: MYSQL_DB
-          value: eoloplantsDB
+          value: {{ .Values.mysql.env.database }}
         - name: MYSQL_USER
           value: root
         - name: MYSQL_PASS
-          value: password
+          value: {{ .Values.mysql.env.password }}
         - name: RABBITMQ_URL
-          value: amqp://root:password@rabbitmq-service
+          value: amqp://{{ .Values.rabbitmq.env.defaultUser }}:{{ .Values.rabbitmq.env.defaultPass }}@{{ .Release.Name }}-rabbitmq-service
         ports:
         - containerPort: 3000
 ---
@@ -54,7 +54,11 @@ spec:
     name: server-port
   selector:
     app: server
-  type: {{ .Values.service.type -}} #ClusterIP
+{{- if .Values.ingress.enabled }}
+  type: ClusterIP
+{{- else }}
+  type: {{ .Values.service.type }}
+{{ end }}
 ---
 {{- if .Values.security.enabled -}}
 apiVersion: networking.k8s.io/v1

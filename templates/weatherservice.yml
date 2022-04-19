@@ -27,9 +27,9 @@ spec:
             fieldRef:
               fieldPath: status.podIP
         - name: GRPC_PORT
-          value: "9090"
+          value: {{ .Values.weatherservice.env.port | quote }}
         ports:
-        - containerPort: 9090
+        - containerPort: {{ .Values.weatherservice.env.port }}
 ---
 apiVersion: v1
 kind: Service
@@ -39,8 +39,8 @@ metadata:
     app: weatherservice
 spec:
   ports:
-  - port: 9090
-    targetPort: 9090
+  - port: {{ .Values.weatherservice.env.port }}
+    targetPort: {{ .Values.weatherservice.env.port }}
     protocol: TCP
     name: weatherservice-port
   selector:
@@ -62,6 +62,6 @@ spec:
         matchLabels:
           app: planner
     ports:
-    - port: 9090
+    - port: {{ .Values.weatherservice.env.port }}
       protocol: TCP
 {{- end -}}

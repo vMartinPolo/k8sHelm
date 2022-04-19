@@ -24,19 +24,19 @@ spec:
         image: {{ .Values.toposervice.image }}:{{ .Values.toposervice.tag }}
         env:
         - name: SPRING_DATA_MONGODB_HOST
-          value: mongodb-service
+          value: {{ .Release.Name }}-mongodb-service
         - name: SPRING_DATA_MONGODB_PORT
           value: "27017"
         - name: SPRING_DATA_MONGODB_DATABASE
-          value: topoDB
+          value: {{ .Values.mongodb.env.database }}
         - name: SPRING_DATA_MONGODB_AUTHENTICATION-DATABASE
           value: admin
         - name: SPRING_DATA_MONGODB_USERNAME
-          value: root
+          value: {{ .Values.mongodb.env.user }}
         - name: SPRING_DATA_MONGODB_PASSWORD
-          value: password
+          value: {{ .Values.mongodb.env.password }}
         ports:
-        - containerPort: 8181
+        - containerPort: {{ .Values.toposervice.ports.containerPort }}
 ---
 apiVersion: v1
 kind: Service
@@ -46,13 +46,17 @@ metadata:
     app: toposervice
 spec:
   ports:
-  - port: 8181
-    targetPort: 8181
+  - port: {{ .Values.toposervice.ports.containerPort }}
+    targetPort: {{ .Values.toposervice.ports.containerPort }}
     protocol: TCP
     name: topo-port
   selector:
     app: toposervice
-  type: {{ .Values.service.type -}} #ClusterIP
+{{- if .Values.ingress.enabled }}
+  type: ClusterIP
+{{- else }}
+  type: {{ .Values.service.type }}
+{{ end }}
 ---
 {{- if .Values.security.enabled -}}
 apiVersion: networking.k8s.io/v1
@@ -93,5 +97,5 @@ spec:
           app.kubernetes.io/name: ingress-nginx
     ports:
     - protocol: TCP
-      port: 8181
+      port: {{ .Values.toposervice.ports.containerPort }}
 {{- end -}}

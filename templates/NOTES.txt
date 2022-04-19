@@ -1,0 +1,21 @@
+Get the application URL by running these commands:
+{{- if .Values.ingress.enabled }}
+{{- $host := .Values.ingress.hosts.host -}}
+{{- range $paths := .Values.ingress.hosts.paths }}
+  http://{{$host}}{{ $paths.path }}{{ if eq $paths.path "/toposervice/" }}api/topographicdetails/{{ end }}
+{{- end }}
+{{- else if contains "NodePort" .Values.service.type }}
+  Server NodePort:
+  echo http://$(kubectl get nodes --namespace default -o jsonpath="{.items[0].status.addresses[0].address}"):$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ .Release.Name }}-server-service)
+  Toposervice NodePort:
+  echo http://$(kubectl get nodes --namespace default -o jsonpath="{.items[0].status.addresses[0].address}"):$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ .Release.Name }}-toposervice-service)/api/topographicdetails/
+{{- else if contains "LoadBalancer" .Values.service.type }}
+     NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+           Server:
+           You can watch the status of by running 'kubectl get --namespace {{ .Release.Namespace }} svc -w {{ .Release.Name }}-server-service'
+  echo http://$(kubectl get svc --namespace {{ .Release.Namespace }} {{ .Release.Name }}-server-service --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}"):{{ .Values.service.port }}
+           Toposervice:
+           You can watch the status of by running 'kubectl get --namespace {{ .Release.Namespace }} svc -w {{ .Release.Name }}-toposervice-service'
+  echo http://$(kubectl get svc --namespace {{ .Release.Namespace }} {{ .Release.Name }}-toposervice-service --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}"):{{ .Values.service.port }}
+
+{{- end }}

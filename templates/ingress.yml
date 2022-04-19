@@ -14,14 +14,14 @@ spec:
         pathType: ImplementationSpecific
         backend:
           service:
-            name: server-service
+            name: {{ .Release.Name }}-server-service
             port:
               name: server-port
       - path: /toposervice/(.*)
         pathType: ImplementationSpecific
         backend:
           service:
-            name: toposervice-service
+            name: {{ .Release.Name }}-toposervice-service
             port:
               name: topo-port
 {{- end }}

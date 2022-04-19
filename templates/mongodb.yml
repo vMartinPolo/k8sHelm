@@ -17,14 +17,14 @@ spec:
     spec:
       containers:
       - name: mongodb
-        image: mongo:5.0.6-focal
+        image: {{ .Values.mongodb.image }}:{{ .Values.mongodb.tag }}
         env:
         - name: MONGO_INITDB_DATABASE
-          value: topoDB
+          value: {{ .Values.mongodb.env.database }}
         - name: MONGO_INITDB_ROOT_USERNAME
-          value: root
+          value: {{ .Values.mongodb.env.user }}
         - name: MONGO_INITDB_ROOT_PASSWORD
-          value: password
+          value: {{ .Values.mongodb.env.password }}
         ports:
         - containerPort: 27017
         - containerPort: 27018
@@ -35,19 +35,15 @@ spec:
       volumes:
       - name: datadb
         persistentVolumeClaim:
-          claimName: mongo-pvc
+          claimName: {{ .Release.Name }}-mongo-pvc
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ .Release.Name }}-mongo-pvc
-# {{- if .Values.persistentVolume.storageclass.isPureDefault -}}
-  # annotations:
-  #   storageclass.kubernetes.io/is-default-class: true
-# {{- end }}
 spec:
-{{- if not .Values.persistentVolume.enabled -}}
-  storageClassName: {{ .Values.persistentVolume.storageclass.mongo }} #mongo
+{{- if .Values.persistentVolume.mongo.storageclass }}
+  storageClassName: {{ .Values.persistentVolume.mongo.storageclass }}
 {{- end }}
   accessModes:
   - ReadWriteOnce

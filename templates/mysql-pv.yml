@@ -1,20 +1,15 @@
-{{- if .Values.persistentVolume.enabled }}
+{{- $persistentVolume := .Values.persistentVolume.enabled -}}
+{{- if or $persistentVolume (not (hasKey .Values.persistentVolume "enabled")) }}
 apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: {{ .Release.Name }}-mysql-pv
-# {{- if .Values.persistentVolume.storageclass.isPureDefault }}
-#   annotations:
-#     storageclass.kubernetes.io/is-default-class: true
-# {{- end }}
 spec:
-{{- if not .Values.persistentVolume.storageclass.isPureDefault }}
-  storageClassName: mysql
-{{- end }}
+  storageClassName: {{ .Values.persistentVolume.mysql.storageclass }}
   accessModes:
     - ReadWriteOnce
   capacity:
     storage: 1Gi
   hostPath:
-    path: /db/mysql
+    path: {{ .Values.persistentVolume.mysql.path }}
 {{- end }}
